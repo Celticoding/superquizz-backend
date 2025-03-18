@@ -21,9 +21,8 @@ public class AnswerController {
     @PostMapping("/question/{questionId}")
     @PreAuthorize("isAuthenticated()")
     public AnswerDTO submitAnswer(@PathVariable Long questionId,
-                                @Valid @RequestBody CreateAnswerDTO createAnswerDTO,
-                                @AuthenticationPrincipal String username) {
-        return answerService.submitAnswer(questionId, username, createAnswerDTO);
+                                @Valid @RequestBody CreateAnswerDTO createAnswerDTO) {
+        return answerService.submitAnswer(questionId, createAnswerDTO);
     }
 
     @GetMapping("/question/{questionId}/user/{userId}")

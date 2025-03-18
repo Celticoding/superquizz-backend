@@ -1,21 +1,17 @@
 package com.quiz.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-
 import java.util.List;
 
-@Data
-public class CreateQuestionDTO {
-    @NotBlank(message = "Le contenu est obligatoire")
-    @Size(max = 1000, message = "Le contenu ne peut pas dépasser 1000 caractères")
-    private String content;
-
-    @NotEmpty(message = "Les options sont obligatoires")
-    private List<String> options;
-
+public record CreateQuestionDTO(
+    @NotBlank(message = "Le texte de la question est obligatoire")
+    @Size(min = 3, max = 500, message = "Le texte de la question doit contenir entre 3 et 500 caractères")
+    String questionContent,
+    
     @NotBlank(message = "La réponse correcte est obligatoire")
-    private String correctAnswer;
-} 
+    @Size(max = 200, message = "La réponse ne doit pas dépasser 200 caractères")
+    String correctAnswer,
+    
+    List<String> options
+) {} 

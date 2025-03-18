@@ -1,6 +1,7 @@
 package com.quiz.mapper;
 
 import com.quiz.dto.QuestionDTO;
+import com.quiz.dto.CreateQuestionDTO;
 import com.quiz.model.Question;
 import org.springframework.stereotype.Component;
 
@@ -11,24 +12,26 @@ public class QuestionMapper {
         if (question == null) {
             return null;
         }
-
-        QuestionDTO dto = new QuestionDTO();
-        dto.setId(question.getId());
-        dto.setQuizId(question.getQuiz().getId());
-        dto.setContent(question.getContent());
-        dto.setOptions(question.getOptions());
-        return dto;
+        
+        return new QuestionDTO(
+            question.getId(),
+            question.getQuestionContent(),
+            question.getCorrectAnswer(),
+            question.getQuiz().getId(),
+            question.getCreatedAt(),
+            question.getUpdatedAt()
+        );
     }
 
-    public Question toEntity(QuestionDTO dto) {
+    public Question toEntity(CreateQuestionDTO dto) {
         if (dto == null) {
             return null;
         }
 
         Question question = new Question();
-        question.setId(dto.getId());
-        question.setContent(dto.getContent());
-        question.setOptions(dto.getOptions());
+        question.setQuestionContent(dto.questionContent());
+        question.setCorrectAnswer(dto.correctAnswer());
+        question.setOptions(dto.options());
         return question;
     }
 } 

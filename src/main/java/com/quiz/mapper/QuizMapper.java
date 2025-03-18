@@ -1,44 +1,37 @@
 package com.quiz.mapper;
 
 import com.quiz.dto.QuizDTO;
+import com.quiz.dto.CreateQuizDTO;
 import com.quiz.model.Quiz;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class QuizMapper {
     
-    private final QuestionMapper questionMapper;
-
     public QuizDTO toDTO(Quiz quiz) {
         if (quiz == null) {
             return null;
         }
-
-        QuizDTO dto = new QuizDTO();
-        dto.setId(quiz.getId());
-        dto.setTitle(quiz.getTitle());
-        dto.setDescription(quiz.getDescription());
-        dto.setCreatedById(quiz.getCreatedBy().getId());
-        dto.setCreatedByUsername(quiz.getCreatedBy().getUsername());
-        if (quiz.getQuestions() != null) {
-            dto.setQuestions(quiz.getQuestions().stream()
-                .map(questionMapper::toDTO)
-                .toList());
-        }
-        return dto;
+        
+        return new QuizDTO(
+            quiz.getId(),
+            quiz.getTitle(),
+            quiz.getDescription(),
+            quiz.getUser().getId(),
+            quiz.getUser().getUsername(),
+            quiz.getCreatedAt(),
+            quiz.getUpdatedAt()
+        );
     }
 
-    public Quiz toEntity(QuizDTO dto) {
+    public Quiz toEntity(CreateQuizDTO dto) {
         if (dto == null) {
             return null;
         }
 
         Quiz quiz = new Quiz();
-        quiz.setId(dto.getId());
-        quiz.setTitle(dto.getTitle());
-        quiz.setDescription(dto.getDescription());
+        quiz.setTitle(dto.title());
+        quiz.setDescription(dto.description());
         return quiz;
     }
 } 

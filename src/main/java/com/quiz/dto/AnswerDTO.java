@@ -1,12 +1,13 @@
 package com.quiz.dto;
 
-import lombok.Data;
+import java.time.LocalDateTime;
 
-@Data
-public class AnswerDTO {
-    private Long id;
-    private Long questionId;
-    private Long userId;
-    private String selectedOption;
-    private boolean isCorrect;
-} 
+public record AnswerDTO(
+    Long id,
+    String selectedOption,
+    Long questionId,
+    Long userId,
+    String username,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {} 

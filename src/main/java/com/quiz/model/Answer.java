@@ -1,18 +1,25 @@
 package com.quiz.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "answers")
-public class Answer {
-    
+@Getter
+@Setter
+public class Answer extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "La réponse sélectionnée est obligatoire")
+    @Size(max = 200, message = "La réponse ne doit pas dépasser 200 caractères")
+    @Column(nullable = false)
+    private String selectedOption;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
@@ -21,9 +28,4 @@ public class Answer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(nullable = false)
-    private String selectedOption;
-
-    private boolean isCorrect;
 } 

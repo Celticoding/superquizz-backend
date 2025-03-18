@@ -1,7 +1,7 @@
 package com.quiz.service;
 
-import com.quiz.dto.CreateQuestionDTO;
 import com.quiz.dto.QuestionDTO;
+import com.quiz.dto.CreateQuestionDTO;
 import com.quiz.mapper.QuestionMapper;
 import com.quiz.model.Question;
 import com.quiz.model.Quiz;
@@ -15,49 +15,40 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuizService quizService;
     private final QuestionMapper questionMapper;
 
+    @Transactional
     public QuestionDTO createQuestion(Long quizId, CreateQuestionDTO createQuestionDTO) {
         Quiz quiz = quizService.findQuizEntityById(quizId);
         
-        Question question = new Question();
+        Question question = questionMapper.toEntity(createQuestionDTO);
         question.setQuiz(quiz);
-        question.setContent(createQuestionDTO.getContent());
-        question.setOptions(createQuestionDTO.getOptions());
-        question.setCorrectAnswer(createQuestionDTO.getCorrectAnswer());
-
-        Question savedQuestion = questionRepository.save(question);
-        return questionMapper.toDTO(savedQuestion);
+        return questionMapper.toDTO(questionRepository.save(question));
     }
 
+    @Transactional
     public QuestionDTO updateQuestion(Long id, CreateQuestionDTO updateQuestionDTO) {
-        Question question = questionRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Question not found"));
-
-        question.setContent(updateQuestionDTO.getContent());
-        question.setOptions(updateQuestionDTO.getOptions());
-        question.setCorrectAnswer(updateQuestionDTO.getCorrectAnswer());
-
-        Question updatedQuestion = questionRepository.save(question);
-        return questionMapper.toDTO(updatedQuestion);
+        Question question = findQuestionEntityById(id);
+        question.setQuestionContent(updateQuestionDTO.questionContent());
+        question.setCorrectAnswer(updateQuestionDTO.correctAnswer());
+        question.setOptions(updateQuestionDTO.options());
+        return questionMapper.toDTO(questionRepository.save(question));
     }
 
+    @Transactional
     public void deleteQuestion(Long id) {
         if (!questionRepository.existsById(id)) {
-            throw new EntityNotFoundException("Question not found");
+            throw new EntityNotFoundException("Question non trouvée");
         }
         questionRepository.deleteById(id);
     }
 
     public QuestionDTO getQuestionById(Long id) {
-        Question question = questionRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Question not found"));
-        return questionMapper.toDTO(question);
+        return questionMapper.toDTO(findQuestionEntityById(id));
     }
 
     public List<QuestionDTO> getQuestionsByQuiz(Long quizId) {
@@ -74,6 +65,6 @@ public class QuestionService {
     // Méthode interne pour obtenir l'entité Question
     Question findQuestionEntityById(Long id) {
         return questionRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Question non trouvée"));
     }
 } 

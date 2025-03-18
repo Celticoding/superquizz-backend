@@ -16,10 +16,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
     private String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
@@ -71,8 +67,4 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
-    }
 } 

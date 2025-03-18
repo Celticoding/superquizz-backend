@@ -13,15 +13,15 @@ public class UserMapper {
             return null;
         }
         
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setCreatedAt(user.getCreatedAt());
-        dto.setUpdatedAt(user.getUpdatedAt());
-        return dto;
+        return new UserDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getCreatedAt(),
+            user.getUpdatedAt()
+        );
     }
 
     public User toEntity(UserDTO dto) {
@@ -30,13 +30,13 @@ public class UserMapper {
         }
 
         User user = new User();
-        user.setId(dto.getId());
-        user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setCreatedAt(dto.getCreatedAt());
-        user.setUpdatedAt(dto.getUpdatedAt());
+        user.setId(dto.id());
+        user.setUsername(dto.username());
+        user.setEmail(dto.email());
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setCreatedAt(dto.createdAt());
+        user.setUpdatedAt(dto.updatedAt());
         user.setRole(Role.USER);
         return user;
     }

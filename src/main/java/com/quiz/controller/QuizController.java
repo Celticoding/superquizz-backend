@@ -24,9 +24,8 @@ public class QuizController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public QuizDTO createQuiz(@Valid @RequestBody CreateQuizDTO createQuizDTO, 
-                             @AuthenticationPrincipal String username) {
-        return quizService.createQuiz(createQuizDTO, username);
+    public QuizDTO createQuiz(@Valid @RequestBody CreateQuizDTO createQuizDTO) {
+        return quizService.createQuiz(createQuizDTO);
     }
 
     @PutMapping("/{id}")

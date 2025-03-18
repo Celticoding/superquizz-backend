@@ -2,47 +2,52 @@ package com.quiz.service;
 
 import com.quiz.dto.AnswerDTO;
 import com.quiz.dto.CreateAnswerDTO;
+import com.quiz.dto.QuestionDTO;
 import com.quiz.mapper.AnswerMapper;
 import com.quiz.model.Answer;
 import com.quiz.model.Question;
 import com.quiz.model.User;
 import com.quiz.repository.AnswerRepository;
+import com.quiz.repository.QuestionRepository;
+import com.quiz.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class AnswerService {
 
     private final AnswerRepository answerRepository;
-    private final QuestionService questionService;
     private final UserService userService;
+    private final QuestionService questionService;
     private final AnswerMapper answerMapper;
 
-    public AnswerDTO submitAnswer(Long questionId, String username, CreateAnswerDTO createAnswerDTO) {
+    @Transactional
+    public AnswerDTO submitAnswer(Long questionId, CreateAnswerDTO createAnswerDTO) {
         Question question = questionService.findQuestionEntityById(questionId);
-        User user = userService.getUserByUsername(username);
 
-        Answer answer = new Answer();
+        User user = userService.getUserById(createAnswerDTO.userId());
+
+        Answer answer = answerMapper.toEntity(createAnswerDTO);
         answer.setQuestion(question);
         answer.setUser(user);
-        answer.setSelectedOption(createAnswerDTO.getSelectedOption());
-        answer.setCorrect(createAnswerDTO.getSelectedOption().equals(question.getCorrectAnswer()));
-
-        Answer savedAnswer = answerRepository.save(answer);
-        return answerMapper.toDTO(savedAnswer);
+        return answerMapper.toDTO(answerRepository.save(answer));
     }
 
     public List<AnswerDTO> getUserAnswersForQuestion(Long questionId, Long userId) {
         Question question = questionService.findQuestionEntityById(questionId);
+
         User user = userService.getUserById(userId);
-        
-        return answerRepository.findByQuestionAndUser(question, user).stream()
+
+        return answerRepository.findByQuestionAndUser(question, user)
+            .stream()
             .map(answerMapper::toDTO)
             .toList();
     }
@@ -51,14 +56,17 @@ public class AnswerService {
         return answerRepository.countCorrectAnswersByQuizAndUser(quizId, userId);
     }
 
+    @Transactional
     public void deleteAnswer(Long id) {
         if (!answerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Answer not found");
+            throw new EntityNotFoundException("Réponse non trouvée");
         }
         answerRepository.deleteById(id);
     }
 
-    public void deleteAnswersByQuestion(Question question) {
+    @Transactional
+    public void deleteAnswersByQuestion(Long questionId) {
+        Question question = questionService.findQuestionEntityById(questionId);
         answerRepository.deleteByQuestion(question);
     }
 } 

@@ -1,16 +1,13 @@
 package com.quiz.dto;
 
-import lombok.Data;
+import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-public class QuizDTO {
-    private Long id;
-    private String title;
-    private String description;
-    private Long createdById;
-    private String createdByUsername;
-    private List<QuestionDTO> questions = new ArrayList<>();
-} 
+public record QuizDTO(
+    Long id,
+    String title,
+    String description,
+    Long userId,
+    String username,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {} 

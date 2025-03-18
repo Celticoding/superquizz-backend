@@ -1,55 +1,41 @@
 package com.quiz.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
-    
+@Getter
+@Setter
+public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Le nom d'utilisateur est obligatoire")
+    @Size(min = 3, max = 50, message = "Le nom d'utilisateur doit contenir entre 3 et 50 caractères")
     @Column(unique = true, nullable = false)
     private String username;
 
+    @NotBlank(message = "L'email est obligatoire")
+    @Email(message = "L'email doit être valide")
     @Column(unique = true, nullable = false)
     private String email;
 
+    @NotBlank(message = "Le mot de passe est obligatoire")
+    @Size(min = 6, message = "Le mot de passe doit contenir au moins 6 caractères")
     @Column(nullable = false)
     private String password;
 
     private String firstName;
     private String lastName;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role = Role.USER;
-
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
-    private List<Quiz> quizzes = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 } 

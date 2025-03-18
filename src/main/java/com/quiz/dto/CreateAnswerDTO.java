@@ -1,10 +1,11 @@
 package com.quiz.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import jakarta.validation.constraints.Size;
 
-@Data
-public class CreateAnswerDTO {
-    @NotBlank(message = "L'option sélectionnée est obligatoire")
-    private String selectedOption;
-} 
+public record CreateAnswerDTO(
+    @NotBlank(message = "La réponse sélectionnée est obligatoire")
+    @Size(max = 200, message = "La réponse ne doit pas dépasser 200 caractères")
+    String selectedOption,
+    Long userId
+) {} 
